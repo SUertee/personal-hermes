@@ -100,8 +100,8 @@ _API_KEY_PROVIDER_AUX_MODELS: Dict[str, str] = {
     "zai": "glm-4.5-flash",
     "kimi-coding": "kimi-k2-turbo-preview",
     "kimi-coding-cn": "kimi-k2-turbo-preview",
-    "minimax": "MiniMax-M2.7",
-    "minimax-cn": "MiniMax-M2.7",
+    "minimax": "MiniMax-M2.7-highspeed",
+    "minimax-cn": "MiniMax-M2.7-highspeed",
     "anthropic": "claude-haiku-4-5-20251001",
     "ai-gateway": "google/gemini-3-flash",
     "opencode-zen": "gemini-3-flash",
@@ -117,6 +117,8 @@ _API_KEY_PROVIDER_AUX_MODELS: Dict[str, str] = {
 _PROVIDER_VISION_MODELS: Dict[str, str] = {
     "xiaomi": "mimo-v2-omni",
     "zai": "glm-5v-turbo",
+    "minimax-cn": "MiniMax-M2.7-highspeed",
+    "minimax": "MiniMax-M2.7-highspeed",
 }
 
 # OpenRouter app attribution headers
@@ -2212,7 +2214,10 @@ def _get_task_timeout(task: str, default: float = _DEFAULT_AUX_TIMEOUT) -> float
 
 # Providers that use Anthropic-compatible endpoints (via OpenAI SDK wrapper).
 # Their image content blocks must use Anthropic format, not OpenAI format.
-_ANTHROPIC_COMPAT_PROVIDERS = frozenset({"minimax", "minimax-cn"})
+# NOTE: MiniMax-M2.7-highspeed uses OpenAI data URL format at the /v1 endpoint.
+# The Anthropic-format conversion was causing images to be silently dropped
+# (MiniMax ignored the image blocks, returning "no image attached" with ~47 tokens).
+_ANTHROPIC_COMPAT_PROVIDERS = frozenset()
 
 
 def _is_anthropic_compat_endpoint(provider: str, base_url: str) -> bool:
@@ -2556,10 +2561,19 @@ def extract_content_or_reasoning(response) -> str:
 
     if content:
         # Strip inline think/reasoning blocks (mirrors _strip_think_blocks)
+        # Includes: <think>, </think>, <thinking>, </thinking>, <reasoning>, </reasoning>,
+        # <thought>, </thought>, <reasoning_scratchpad>, </reasoning_scratchpad>,
+        # <think>,</think> (MiniMax), and nested/anonymous think blocks.
         cleaned = re.sub(
-            r"<(?:think|thinking|reasoning|thought|REASONING_SCRATCHPAD)>"
-            r".*?"
-            r"</(?:think|thinking|reasoning|thought|REASONING_SCRATCHPAD)>",
+            r"<[a-zA-Z_][a-zA-Z0-9_]*>(?:(?!</?[a-zA-Z_][a-zA-Z0-9_]*>).)*?</[a-zA-Z_][a-zA-Z0-9_]*>"
+            r"|<unknown_think>.*?</unknown_think>"
+            r"|<think>.*?</think>"
+            r"|<thinking>.*?</thinking>"
+            r"|<reasoning>.*?</reasoning>"
+            r"|<thought>.*?</thought>"
+            r"|<REASONING_SCRATCHPAD>.*?</REASONING_SCRATCHPAD>"
+            r"|<reasoning_scratchpad>.*?</reasoning_scratchpad>"
+            r"|<unknown>.*?</unknown>",
             "", content, flags=re.DOTALL | re.IGNORECASE,
         ).strip()
         if cleaned:

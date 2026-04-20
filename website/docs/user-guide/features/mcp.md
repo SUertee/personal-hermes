@@ -72,6 +72,23 @@ Use stdio servers when:
 - you want low-latency access to local resources
 - you are following MCP server docs that show `command`, `args`, and `env`
 
+Important:
+- Hermes does not automatically forward every variable from `~/.hermes/.env` into stdio MCP subprocesses
+- only safe baseline vars are forwarded by default
+- declare credentials under `env`; if a declared key has a null or empty value, Hermes fills it from its own environment
+
+Example using environment backfill:
+
+```yaml
+mcp_servers:
+  minimax:
+    command: "uvx"
+    args: ["minimax-coding-plan-mcp", "-y"]
+    env:
+      MINIMAX_API_KEY:
+      MINIMAX_API_HOST:
+```
+
 ### HTTP servers
 
 HTTP MCP servers are remote endpoints Hermes connects to directly.
@@ -99,7 +116,7 @@ Hermes reads MCP config from `~/.hermes/config.yaml` under `mcp_servers`.
 |---|---|---|
 | `command` | string | Executable for a stdio MCP server |
 | `args` | list | Arguments for the stdio server |
-| `env` | mapping | Environment variables passed to the stdio server |
+| `env` | mapping | Environment variables passed to the stdio server; null/empty values are filled from Hermes |
 | `url` | string | HTTP MCP endpoint |
 | `headers` | mapping | HTTP headers for remote servers |
 | `timeout` | number | Tool call timeout |

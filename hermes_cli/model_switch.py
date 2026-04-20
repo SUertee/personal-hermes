@@ -824,8 +824,7 @@ def list_authenticated_providers(
             continue
 
         # Prefer auth.py PROVIDER_REGISTRY for env var names — it's our
-        # source of truth.  models.dev can have wrong mappings (e.g.
-        # minimax-cn → MINIMAX_API_KEY instead of MINIMAX_CN_API_KEY).
+        # source of truth (models.dev may have stale/wrong mappings).
         pconfig = PROVIDER_REGISTRY.get(hermes_id)
         if pconfig and pconfig.api_key_env_vars:
             env_vars = list(pconfig.api_key_env_vars)

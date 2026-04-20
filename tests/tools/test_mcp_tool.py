@@ -946,6 +946,52 @@ class TestBuildSafeEnv:
         assert "DATABASE_URL" not in result
         assert "API_SECRET" not in result
 
+    def test_declared_empty_env_values_are_filled_from_os_environ(self):
+        """Declared env keys with empty values are filled from os.environ."""
+        from tools.mcp_tool import _build_safe_env
+
+        fake_env = {
+            "PATH": "/usr/bin",
+            "MINIMAX_API_KEY": "mm-key",
+            "MINIMAX_API_HOST": "https://api.minimaxi.com",
+            "OPENAI_API_KEY": "should-stay-hidden",
+        }
+        with patch.dict("os.environ", fake_env, clear=True):
+            result = _build_safe_env(
+                {
+                    "MINIMAX_API_KEY": "",
+                    "MINIMAX_API_HOST": None,
+                }
+            )
+
+        assert result["PATH"] == "/usr/bin"
+        assert result["MINIMAX_API_KEY"] == "mm-key"
+        assert result["MINIMAX_API_HOST"] == "https://api.minimaxi.com"
+        assert "OPENAI_API_KEY" not in result
+
+    def test_user_env_overrides_os_environ_fill(self):
+        """Explicit env mapping still wins over os.environ backfill."""
+        from tools.mcp_tool import _build_safe_env
+
+        with patch.dict("os.environ", {"MINIMAX_API_HOST": "https://wrong.example"}, clear=True):
+            result = _build_safe_env({"MINIMAX_API_HOST": "https://api.minimaxi.com"})
+
+        assert result["MINIMAX_API_HOST"] == "https://api.minimaxi.com"
+
+    def test_missing_declared_env_logs_warning(self):
+        """Missing declared env vars should log a clear warning."""
+        from tools.mcp_tool import _build_safe_env
+
+        with patch.dict("os.environ", {"PATH": "/usr/bin"}, clear=True), \
+             patch("tools.mcp_tool.logger.warning") as mock_warning:
+            result = _build_safe_env({"MINIMAX_API_KEY": ""}, server_name="minimax")
+
+        assert result["PATH"] == "/usr/bin"
+        assert "MINIMAX_API_KEY" not in result
+        mock_warning.assert_called_once()
+        assert "env requested '%s' but it is not set" in mock_warning.call_args[0][0]
+        assert mock_warning.call_args[0][1:] == ("minimax", "MINIMAX_API_KEY")
+
 
 # ---------------------------------------------------------------------------
 # _sanitize_error

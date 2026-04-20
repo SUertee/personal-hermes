@@ -485,7 +485,7 @@ DEFAULT_CONFIG = {
             "model": "",           # e.g. "google/gemini-2.5-flash", "gpt-4o"
             "base_url": "",        # direct OpenAI-compatible endpoint (takes precedence over provider)
             "api_key": "",         # API key for base_url (falls back to OPENAI_API_KEY)
-            "timeout": 120,        # seconds — LLM API call timeout; vision payloads need generous timeout
+            "timeout": 3600,       # seconds — LLM API call timeout; vision payloads need generous timeout
             "download_timeout": 30,  # seconds — image HTTP download timeout; increase for slow connections
         },
         "web_extract": {
@@ -949,14 +949,7 @@ OPTIONAL_ENV_VARS = {
         "category": "provider",
         "advanced": True,
     },
-    "MINIMAX_CN_API_KEY": {
-        "description": "MiniMax API key (China endpoint)",
-        "prompt": "MiniMax (China) API key",
-        "url": "https://www.minimaxi.com/",
-        "password": True,
-        "category": "provider",
-        "advanced": True,
-    },
+
     "MINIMAX_CN_BASE_URL": {
         "description": "MiniMax (China) base URL override",
         "prompt": "MiniMax (China) base URL (leave empty for default)",
@@ -2732,7 +2725,7 @@ _FALLBACK_COMMENT = """
 #   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
 #   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
 #   minimax      (MINIMAX_API_KEY)     — MiniMax
-#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
+#   minimax-cn   (MINIMAX_API_KEY)   — MiniMax (China)
 #
 # For custom OpenAI-compatible endpoints, add base_url and api_key_env.
 #
@@ -2776,7 +2769,7 @@ _COMMENTED_SECTIONS = """
 #   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
 #   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
 #   minimax      (MINIMAX_API_KEY)     — MiniMax
-#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
+#   minimax-cn   (MINIMAX_API_KEY)   — MiniMax (China)
 #
 # For custom OpenAI-compatible endpoints, add base_url and api_key_env.
 #

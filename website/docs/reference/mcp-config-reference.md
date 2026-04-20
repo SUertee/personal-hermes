@@ -41,7 +41,7 @@ mcp_servers:
 |---|---|---|---|
 | `command` | string | stdio | Executable to launch |
 | `args` | list | stdio | Arguments for the subprocess |
-| `env` | mapping | stdio | Environment passed to the subprocess |
+| `env` | mapping | stdio | Environment passed to the subprocess; null/empty values are filled from Hermes' environment |
 | `url` | string | HTTP | Remote MCP endpoint |
 | `headers` | mapping | HTTP | Headers for remote server requests |
 | `enabled` | bool | both | Skip the server entirely when false |
@@ -143,6 +143,30 @@ Behavior:
 - no discovery
 - no tool registration
 - config remains in place for later reuse
+
+## Stdio environment rules
+
+For stdio servers, Hermes does not forward all of `~/.hermes/.env` automatically.
+
+Default behavior:
+- Hermes passes a small safe baseline such as `PATH`, `HOME`, and `XDG_*`
+- secrets like `OPENAI_API_KEY` or `MINIMAX_API_KEY` are not forwarded unless you opt in
+
+Ways to pass credentials:
+- `env`: explicitly set subprocess env values
+- `env` with null/empty values: declare allowed keys and let Hermes fill them from its current environment
+
+Example:
+
+```yaml
+mcp_servers:
+  minimax:
+    command: "uvx"
+    args: ["minimax-coding-plan-mcp", "-y"]
+    env:
+      MINIMAX_API_KEY:
+      MINIMAX_API_HOST:
+```
 
 ## Empty result behavior
 

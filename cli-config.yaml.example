@@ -22,7 +22,7 @@ model:
   #   "zai"         - Use z.ai / ZhipuAI GLM models (requires: GLM_API_KEY)
   #   "kimi-coding"  - Kimi / Moonshot AI (requires: KIMI_API_KEY)
   #   "minimax"      - MiniMax global (requires: MINIMAX_API_KEY)
-  #   "minimax-cn"   - MiniMax China (requires: MINIMAX_CN_API_KEY)
+  #   "minimax-cn"   - MiniMax China (requires: MINIMAX_API_KEY)
   #   "huggingface"  - Hugging Face Inference (requires: HF_TOKEN)
   #   "xiaomi"       - Xiaomi MiMo (requires: XIAOMI_API_KEY)
   #   "arcee"        - Arcee AI Trinity models (requires: ARCEEAI_API_KEY)
@@ -647,6 +647,7 @@ platform_toolsets:
 #   command: the executable to run
 #   args: command-line arguments
 #   env: environment variables (only these + safe defaults passed to subprocess)
+#        null / empty values are filled from Hermes' current environment
 #
 # HTTP servers (connect to a URL):
 #   url: the MCP server endpoint
@@ -669,7 +670,13 @@ platform_toolsets:
 #     command: npx
 #     args: ["-y", "@modelcontextprotocol/server-github"]
 #     env:
-#       GITHUB_PERSONAL_ACCESS_TOKEN: "ghp_..."
+#       GITHUB_PERSONAL_ACCESS_TOKEN:
+#   minimax:
+#     command: uvx
+#     args: ["minimax-coding-plan-mcp", "-y"]
+#     env:
+#       MINIMAX_API_KEY:
+#       MINIMAX_API_HOST:
 #
 # Sampling (server-initiated LLM requests) — enabled by default.
 # Per-server config under the 'sampling' key:

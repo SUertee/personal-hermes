@@ -45,7 +45,7 @@ Both `provider` and `model` are **required**. If either is missing, the fallback
 | z.ai / GLM | `zai` | `GLM_API_KEY` |
 | Kimi / Moonshot | `kimi-coding` | `KIMI_API_KEY` |
 | MiniMax | `minimax` | `MINIMAX_API_KEY` |
-| MiniMax (China) | `minimax-cn` | `MINIMAX_CN_API_KEY` |
+| MiniMax (China) | `minimax-cn` | `MINIMAX_API_KEY` |
 | DeepSeek | `deepseek` | `DEEPSEEK_API_KEY` |
 | OpenCode Zen | `opencode-zen` | `OPENCODE_ZEN_API_KEY` |
 | OpenCode Go | `opencode-go` | `OPENCODE_GO_API_KEY` |
