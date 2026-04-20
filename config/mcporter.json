@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "tavily": {
+      "description": "Tavily web search MCP for backup when minimax web_search fails",
+      "command": "npx",
+      "args": [
+        "--yes",
+        "tavily-mcp"
+      ],
+      "env": {
+        "TAVILY_API_KEY": "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"
+      }
+    },
+    "minimax": {
+      "command": "uvx",
+      "args": [
+        "minimax-coding-plan-mcp",
+        "-y"
+      ],
+      "description": "MiniMax Token Plan MCP for image understanding and web search",
+      "env": {
+        "MINIMAX_API_KEY": "sk-cp-oVVF-rw70qCW04MapyF3lt0vTinl7zCMTA7EL26S_z8_P4U1RDzpbiXv4fAjHhhbhSFOoYOUBPxxAKjCpJAukIKSpibkDI0huaWToJL18pE0mHeWB8PCL_Y",
+        "MINIMAX_API_HOST": "https://api.minimaxi.com"
+      }
+    }
+  },
+  "imports": []
+}

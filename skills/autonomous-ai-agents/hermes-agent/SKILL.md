@@ -360,7 +360,7 @@ Full config reference: https://hermes-agent.nousresearch.com/docs/user-guide/con
 | Hugging Face | Token | `HF_TOKEN` |
 | Z.AI / GLM | API key | `GLM_API_KEY` |
 | MiniMax | API key | `MINIMAX_API_KEY` |
-| MiniMax CN | API key | `MINIMAX_CN_API_KEY` |
+| MiniMax CN | API key | `MINIMAX_API_KEY` |
 | Kimi / Moonshot | API key | `KIMI_API_KEY` |
 | Alibaba / DashScope | API key | `DASHSCOPE_API_KEY` |
 | Xiaomi MiMo | API key | `XIAOMI_API_KEY` |

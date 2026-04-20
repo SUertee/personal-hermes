@@ -191,12 +191,17 @@ _CREDENTIAL_PATTERN = re.compile(
 # Security helpers
 # ---------------------------------------------------------------------------
 
-def _build_safe_env(user_env: Optional[dict]) -> dict:
+def _build_safe_env(
+    user_env: Optional[dict],
+    *,
+    server_name: Optional[str] = None,
+) -> dict:
     """Build a filtered environment dict for stdio subprocesses.
 
     Only passes through safe baseline variables (PATH, HOME, etc.) and XDG_*
     variables from the current process environment, plus any variables
-    explicitly specified by the user in the server config.
+    explicitly specified by the user in the server config. Declared ``env``
+    keys with null/empty values are filled from the current ``os.environ``.
 
     This prevents accidentally leaking secrets like API keys, tokens, or
     credentials to MCP server subprocesses.
@@ -206,7 +211,27 @@ def _build_safe_env(user_env: Optional[dict]) -> dict:
         if key in _SAFE_ENV_KEYS or key.startswith("XDG_"):
             env[key] = value
     if user_env:
-        env.update(user_env)
+        resolved_user_env = {}
+        for key, value in user_env.items():
+            if value in (None, ""):
+                if key in os.environ:
+                    resolved_user_env[key] = os.environ[key]
+                else:
+                    if server_name:
+                        logger.warning(
+                            "MCP server '%s': env requested '%s' but it is not set",
+                            server_name,
+                            key,
+                        )
+                    else:
+                        logger.warning(
+                            "MCP env requested '%s' but it is not set",
+                            key,
+                        )
+                    continue
+            else:
+                resolved_user_env[key] = value
+        env.update(resolved_user_env)
     return env
 
 
@@ -299,7 +324,7 @@ def _resolve_stdio_command(command: str, env: dict) -> tuple[str, dict]:
         which_hit = shutil.which(resolved_command, path=path_arg)
         if which_hit:
             resolved_command = which_hit
-        elif resolved_command in {"npx", "npm", "node"}:
+        elif resolved_command in {"npx", "npm", "node", "uv", "uvx"}:
             hermes_home = os.path.expanduser(
                 os.getenv(
                     "HERMES_HOME", os.path.join(os.path.expanduser("~"), ".hermes")
@@ -898,7 +923,7 @@ class MCPServerTask:
                 f"MCP server '{self.name}' has no 'command' in config"
             )
 
-        safe_env = _build_safe_env(user_env)
+        safe_env = _build_safe_env(user_env, server_name=self.name)
         command, safe_env = _resolve_stdio_command(command, safe_env)
 
         # Check package against OSV malware database before spawning

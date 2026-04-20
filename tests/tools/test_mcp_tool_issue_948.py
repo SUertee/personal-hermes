@@ -34,6 +34,30 @@ def test_resolve_stdio_command_falls_back_to_hermes_node_bin(tmp_path):
     assert env["PATH"].split(os.pathsep)[0] == str(node_bin)
 
 
+def test_resolve_stdio_command_falls_back_to_local_bin_for_uvx(tmp_path):
+    local_bin = tmp_path / ".local" / "bin"
+    local_bin.mkdir(parents=True)
+    uvx_path = local_bin / "uvx"
+    uvx_path.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    uvx_path.chmod(0o755)
+
+    original_expanduser = os.path.expanduser
+
+    def _fake_expanduser(path: str) -> str:
+        if path == "~":
+            return str(tmp_path)
+        if path.startswith("~/"):
+            return str(tmp_path / path[2:])
+        return original_expanduser(path)
+
+    with patch("tools.mcp_tool.shutil.which", return_value=None), \
+         patch("tools.mcp_tool.os.path.expanduser", side_effect=_fake_expanduser):
+        command, env = _resolve_stdio_command("uvx", {"PATH": "/usr/bin"})
+
+    assert command == str(uvx_path)
+    assert env["PATH"].split(os.pathsep)[0] == str(local_bin)
+
+
 def test_resolve_stdio_command_respects_explicit_empty_path():
     seen_paths = []
 

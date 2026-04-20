@@ -26,7 +26,7 @@ You need at least one way to connect to an LLM. Use `hermes model` to switch pro
 | **Kimi / Moonshot (China)** | `KIMI_CN_API_KEY` in `~/.hermes/.env` (provider: `kimi-coding-cn`; aliases: `kimi-cn`, `moonshot-cn`) |
 | **Arcee AI** | `ARCEEAI_API_KEY` in `~/.hermes/.env` (provider: `arcee`; aliases: `arcee-ai`, `arceeai`) |
 | **MiniMax** | `MINIMAX_API_KEY` in `~/.hermes/.env` (provider: `minimax`) |
-| **MiniMax China** | `MINIMAX_CN_API_KEY` in `~/.hermes/.env` (provider: `minimax-cn`) |
+| **MiniMax China** | `MINIMAX_API_KEY` in `~/.hermes/.env` (provider: `minimax-cn`) |
 | **Alibaba Cloud** | `DASHSCOPE_API_KEY` in `~/.hermes/.env` (provider: `alibaba`, aliases: `dashscope`, `qwen`) |
 | **Kilo Code** | `KILOCODE_API_KEY` in `~/.hermes/.env` (provider: `kilocode`) |
 | **Xiaomi MiMo** | `XIAOMI_API_KEY` in `~/.hermes/.env` (provider: `xiaomi`, aliases: `mimo`, `xiaomi-mimo`) |
@@ -261,7 +261,7 @@ hermes chat --provider minimax --model MiniMax-M2.7
 
 # MiniMax (China endpoint)
 hermes chat --provider minimax-cn --model MiniMax-M2.7
-# Requires: MINIMAX_CN_API_KEY in ~/.hermes/.env
+# Requires: MINIMAX_API_KEY in ~/.hermes/.env
 
 # Alibaba Cloud / DashScope (Qwen models)
 hermes chat --provider alibaba --model qwen3.5-plus
