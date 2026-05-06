@@ -88,7 +88,8 @@ mcporter config remove <server>
 mcporter config import <path>
 ```
 
-Config file location: `./config/mcporter.json` (override with `--config`).
+mcporter's default config location is `./config/mcporter.json` (override with `--config`).
+This repo keeps an example config at `./docs/fork/samples/mcporter.example.json` so it is not confused with Hermes' own runtime config in `~/.hermes/config.yaml`.
 
 ## Daemon
 
